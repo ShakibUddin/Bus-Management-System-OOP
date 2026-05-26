@@ -100,6 +100,67 @@
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
+            else if (input == "3")
+            {
+                Console.WriteLine("========== CREATE BUS ==========");
+
+                Console.Write("Coach  : ");
+                string coach = Console.ReadLine() ?? "";
+
+                Console.Write($"Classification({String.Join(", ", BusService.busClassifications.Keys)}) : ");
+                string classification = Console.ReadLine() ?? "";
+
+                BusService busService = new BusService();
+
+                try
+                {
+                    busService.CreateBus(coach, classification);
+                    Console.WriteLine();
+                    Console.WriteLine("Bus created successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "4")
+            {
+                var buses = BusService.GetAllBuses();
+
+                Console.WriteLine("========== ALL BUSES ==========");
+                Console.WriteLine($"Total Buses: {buses.Count}");
+                Console.WriteLine();
+
+                Console.WriteLine(
+                    "Id".PadRight(5) +
+                    "Coach".PadRight(30) +
+                    "Classification".PadRight(30) +
+                    "Total Seating Capacity".PadRight(30) +
+                    "Created At"
+                );
+
+                Console.WriteLine(new string('-', 90));
+
+                foreach (Bus bus in buses)
+                {
+                    Console.WriteLine(
+                        bus.Id.ToString().PadRight(5) +
+                        bus.Coach.PadRight(30) +
+                        bus.Classification.PadRight(30) +
+                        bus.TotalSeatingCapacity.ToString().PadRight(15) +
+                        bus.CreatedAt.ToString("yyyy-MM-dd")
+                    );
+                }
+
+                Console.WriteLine(new string('-', 90));
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
         }
     }
 }
