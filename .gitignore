@@ -1,0 +1,28 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code / Visual Studio settings
+.vscode/
+.vs/
+
+# Rider / JetBrains
+.idea/
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# .NET local tools
+.toolstarget/
