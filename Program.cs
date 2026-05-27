@@ -107,7 +107,7 @@
                 Console.Write("Coach  : ");
                 string coach = Console.ReadLine() ?? "";
 
-                Console.Write($"Classification({String.Join(", ", BusService.busClassifications.Keys)}) : ");
+                Console.Write($"Classification({String.Join(", ", BusService.busSeatingCapacity.Keys)}) : ");
                 string classification = Console.ReadLine() ?? "";
 
                 BusService busService = new BusService();
@@ -151,13 +151,131 @@
                         bus.Id.ToString().PadRight(5) +
                         bus.Coach.PadRight(30) +
                         bus.Classification.PadRight(30) +
-                        bus.TotalSeatingCapacity.ToString().PadRight(15) +
+                        bus.TotalSeatingCapacity.ToString().PadRight(30) +
                         bus.CreatedAt.ToString("yyyy-MM-dd")
                     );
                 }
 
                 Console.WriteLine(new string('-', 90));
 
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "5")
+            {
+                Console.WriteLine("========== CREATE SCHEDULE ==========");
+
+                Console.Write("Bus Id  : ");
+                string busId = Console.ReadLine() ?? "";
+
+                Console.WriteLine("Departure City : ");
+                Console.Write($"Cities({String.Join(", ", ScheduleManager.availableCities)}) : ");
+                string departureCity = Console.ReadLine() ?? "";
+
+                Console.WriteLine("Arrival City : ");
+                Console.Write($"Cities({String.Join(", ", ScheduleManager.availableCities)}) : ");
+                string arrivalCity = Console.ReadLine() ?? "";
+
+                Console.Write("Departure Date(YYYY-MM-DD) : ");
+                string departureDate = Console.ReadLine() ?? "";
+
+
+                Console.WriteLine("Departure Time : ");
+                Console.Write($"Slots({String.Join(", ", ScheduleManager.availableTimeSlots)}) : ");
+                string departureTime = Console.ReadLine() ?? "";
+
+                Console.Write("Ticket Price(BDT) : ");
+                string ticketPrice = Console.ReadLine() ?? "";
+
+                int busIdNumber = 0;
+                decimal ticketPriceDecimal = decimal.Parse(ticketPrice);
+                try
+                {
+                    busIdNumber = int.Parse(busId);
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid Bus Id!");
+                }
+                Console.WriteLine($"busIdNumber: {busIdNumber}");
+                BusService busService = new BusService();
+                Bus bus = busService.GetBusById(busIdNumber);
+
+
+                try
+                {
+                    ScheduleService scheduleService = new ScheduleService();
+                    scheduleService.CreateSchedule(busIdNumber, bus.Classification, departureCity, arrivalCity, departureDate, departureTime, ticketPriceDecimal);
+                    Console.WriteLine();
+                    Console.WriteLine("Schedule created successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "6")
+            {
+                var schedules = ScheduleService.GetAllSchedulees();
+
+                Console.WriteLine("========== ALL SCHEDULES ==========\n");
+                Console.WriteLine($"Total Schedules: {schedules.Count}\n");
+
+                foreach (Schedule schedule in schedules)
+                {
+                    BusService busService = new BusService();
+                    Bus bus = busService.GetBusById(schedule.BusId);
+
+                    int seatsPerRow =
+                        bus.Classification == BusService.BusClassifications.Business.ToString() ? 3 : 4;
+
+                    int seatingCapacity = BusService.busSeatingCapacity[bus.Classification];
+                    int rows = seatingCapacity / seatsPerRow;
+
+                    Console.WriteLine(new string('=', 70));
+                    Console.WriteLine($"Schedule Id   : {schedule.Id}");
+                    Console.WriteLine($"Bus Id        : {schedule.BusId}");
+                    Console.WriteLine($"Class         : {bus.Classification}");
+                    Console.WriteLine($"Route         : {schedule.DepartureCity} -> {schedule.ArrivalCity}");
+                    Console.WriteLine($"Departure     : {schedule.DepartureDate} | {schedule.DepartureTime}");
+                    Console.WriteLine($"Price         : {schedule.TicketPrice} BDT");
+
+                    Console.WriteLine(new string('-', 70));
+
+                    // LEGEND
+                    Console.WriteLine("\nLegend:");
+                    Console.WriteLine("  [ ] Available     [✓] Confirmed\n");
+
+                    Console.WriteLine("                     DRIVER");
+                    Console.WriteLine();
+
+                    char row = 'A';
+
+                    for (int i = 0; i < rows; i++)
+                    {
+                        for (int col = 1; col <= seatsPerRow; col++)
+                        {
+                            string seat = $"{row}{col}";
+
+                            schedule.SeatPlan.TryGetValue(seat, out string status);
+
+                            string symbol = status == BusService.BusSeatStatus.Confirmed.ToString() ? "✓" : " ";
+
+                            Console.Write($"[{seat}{symbol}] ".PadRight(10));
+                        }
+
+                        Console.WriteLine();
+                        row++;
+                    }
+
+                    Console.WriteLine("\n");
+                }
+
+                Console.WriteLine(new string('=', 70));
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
