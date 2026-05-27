@@ -287,8 +287,7 @@
                 Console.WriteLine(new string('-', 70));
 
                 // LEGEND
-                Console.WriteLine("\nLegend:");
-                Console.WriteLine("  [ ] Available     [✓] Confirmed\n");
+                Console.WriteLine("Seat Layout ([ ] Available        [X] Booked      [✓] Confirmed):\n");
                 Console.WriteLine();
 
                 char row = 'A';
@@ -305,18 +304,18 @@
 
                         string symbol1 =
                             schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         string symbol2 =
                             schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         string symbol3 =
                             schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         Console.WriteLine(
-                            $"[{seat1}{symbol1}]        [{seat2}{symbol2}] [{seat3}{symbol3}]"
+                            $"[{seat1}:{symbol1}]        [{seat2}:{symbol2}] [{seat3}:{symbol3}]"
                         );
                     }
                     else
@@ -330,22 +329,22 @@
 
                         string symbol1 =
                             schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         string symbol2 =
                             schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         string symbol3 =
                             schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         string symbol4 =
                             schedule.SeatPlan[seat4] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : " ";
+                            ? "✓" : schedule.SeatPlan[seat4] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
 
                         Console.WriteLine(
-                            $"[{seat1}{symbol1}] [{seat2}{symbol2}]        [{seat3}{symbol3}] [{seat4}{symbol4}]"
+                            $"[{seat1}:{symbol1}] [{seat2}:{symbol2}]        [{seat3}:{symbol3}] [{seat4}:{symbol4}]"
                         );
                     }
 
@@ -355,6 +354,47 @@
                 Console.WriteLine("\n");
 
                 Console.WriteLine(new string('=', 70));
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "8")
+            {
+                Console.WriteLine("========== BOOK TICKET ==========\n");
+
+                Console.Write("Schedule Id : ");
+                string scheduleId = Console.ReadLine() ?? "";
+
+                Console.Write("User Id     : ");
+                string userId = Console.ReadLine() ?? "";
+
+                Console.Write("Seat (e.g A1): ");
+                string seat = (Console.ReadLine() ?? "").ToUpper();
+
+                try
+                {
+                    int scheduleIdNumber = int.Parse(scheduleId);
+                    int userIdNumber = int.Parse(userId);
+
+                    TicketService ticketService = new TicketService();
+                    ScheduleService scheduleService = new ScheduleService();
+                    Dictionary<string, string> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
+
+                    ticketService.CreateTicket(
+                        scheduleIdNumber,
+                        userIdNumber,
+                        seat,
+                        seatPlan
+                    );
+
+                    Console.WriteLine();
+                    Console.WriteLine("Ticket booked successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }

@@ -9,7 +9,8 @@ public class BusService
     public enum BusSeatStatus
     {
         Confirmed,
-        Available
+        Available,
+        Booked
     }
     public static Dictionary<string, int> busSeatingCapacity = new()
     {
