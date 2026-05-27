@@ -55,7 +55,22 @@ public class ScheduleService
 
         return false;
     }
+    public Schedule GetScheduleById(int scheduleId)
+    {
+        if (scheduleId <= 0)
+        {
+            throw new ArgumentException("Invalid Schedule ID!");
+        }
 
+        var schedule = ScheduleManager.Schedules.Find(s => s.Id == scheduleId) ?? null;
+
+        if (schedule == null)
+        {
+            throw new ArgumentException("No Schedule Found With This ID!");
+        }
+
+        return schedule;
+    }
     public static List<Schedule> GetAllSchedulees()
     {
         return ScheduleManager.Schedules;
