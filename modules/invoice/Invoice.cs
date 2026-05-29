@@ -4,10 +4,10 @@ public class Invoice
     public int TicketId { get; }
     public int UserId { get; }
     public decimal AmountDue { get; }
-    public string PaymentStatus { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
     public DateTime CreatedAt { get; }
 
-    public Invoice(int id, int tiketId, int userId, decimal amountDue, string paymentStatus)
+    public Invoice(int id, int tiketId, int userId, decimal amountDue, PaymentStatus paymentStatus)
     {
         Id = id;
         TicketId = tiketId;

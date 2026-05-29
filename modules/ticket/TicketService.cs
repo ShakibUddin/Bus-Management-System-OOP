@@ -1,7 +1,7 @@
 
 public class TicketService
 {
-    public Ticket CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, string> seatPlan)
+    public Ticket CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, BusSeatStatus> seatPlan)
     {
         if (!CheckIfScheduleIdExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
         if (!CheckIfUserIdExists(userId)) throw new ArgumentException("No User Found With This Id!");
@@ -11,17 +11,17 @@ public class TicketService
 
         if (!schedule.SeatPlan.ContainsKey(seat)) throw new ArgumentException("Invalid Seat!");
 
-        if (schedule.SeatPlan[seat] == BusService.BusSeatStatus.Confirmed.ToString())
+        if (schedule.SeatPlan[seat] == BusSeatStatus.Confirmed)
         {
             throw new ArgumentException("Seat Already Confirmed!");
         }
-        if (schedule.SeatPlan[seat] == BusService.BusSeatStatus.Booked.ToString())
+        if (schedule.SeatPlan[seat] == BusSeatStatus.Booked)
         {
             throw new ArgumentException("Seat Already Booked!");
         }
 
         // UPDATE SEAT STATUS
-        schedule.SeatPlan[seat] = BusService.BusSeatStatus.Booked.ToString();
+        schedule.SeatPlan[seat] = BusSeatStatus.Booked;
 
         Ticket newTicket = new(TicketManager.Tickets.Count + 1, scheduleId, userId, seat);
         TicketManager.Tickets.Add(newTicket);
@@ -49,7 +49,7 @@ public class TicketService
         }
         return false;
     }
-    private bool CheckIfSeatExists(Dictionary<string, string> seatPlan, string seat)
+    private bool CheckIfSeatExists(Dictionary<string, BusSeatStatus> seatPlan, string seat)
     {
         return seatPlan.ContainsKey(seat);
     }

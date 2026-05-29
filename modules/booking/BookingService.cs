@@ -9,7 +9,7 @@ class BookingService
         _invoiceService = invoiceService;
     }
 
-    public void BookTicket(int scheduleId, int userId, string seat, Dictionary<string, string> seatPlan, decimal amountDue)
+    public void BookTicket(int scheduleId, int userId, string seat, Dictionary<string, BusSeatStatus> seatPlan, decimal amountDue)
     {
         try
         {

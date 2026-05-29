@@ -1,24 +1,12 @@
 
 public class InvoiceService
 {
-    public enum PaymentStatus
-    {
-        Paid,
-        Unpaid
-    }
-    public enum InvoiceSeatStatus
-    {
-        Confirmed,
-        Available,
-        Booked
-    }
-
     public void CreateInvoice(int ticketId, int userId, decimal amountDue)
     {
         if (!CheckIfTicketExists(ticketId)) throw new ArgumentException("No Ticket Found With This Id!");
         if (!CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
 
-        Invoice newInvoice = new(InvoiceManager.Invoices.Count + 1, ticketId, userId, amountDue, PaymentStatus.Unpaid.ToString());
+        Invoice newInvoice = new(InvoiceManager.Invoices.Count + 1, ticketId, userId, amountDue, PaymentStatus.Unpaid);
         InvoiceManager.Invoices.Add(newInvoice);
     }
     private bool CheckIfTicketExists(int ticketId)

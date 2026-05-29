@@ -93,7 +93,7 @@
                         user.Name.PadRight(30) +
                         user.Email.PadRight(30) +
                         user.Phone.PadRight(15) +
-                        user.CreatedAt.ToString("yyyy-MM-dd")
+                        user.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
                     );
                 }
 
@@ -152,9 +152,9 @@
                     Console.WriteLine(
                         bus.Id.ToString().PadRight(5) +
                         bus.Coach.PadRight(30) +
-                        bus.Classification.PadRight(30) +
+                        bus.Classification.ToString().PadRight(30) +
                         bus.TotalSeatingCapacity.ToString().PadRight(30) +
-                        bus.CreatedAt.ToString("yyyy-MM-dd")
+                        bus.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
                     );
                 }
 
@@ -243,7 +243,7 @@
                        $"{schedule.DepartureCity} -> {schedule.ArrivalCity}".PadRight(30) +
                        $"{schedule.DepartureDate} | {schedule.DepartureTime}".ToString().PadRight(20) +
                        schedule.TicketPrice.ToString().PadRight(20) +
-                       schedule.CreatedAt.ToString("yyyy-MM-dd")
+                       schedule.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
                    );
                 }
 
@@ -272,8 +272,7 @@
                 BusService busService = new BusService();
                 Bus bus = busService.GetBusById(schedule.BusId);
 
-                int seatsPerRow =
-                    bus.Classification == BusService.BusClassifications.Business.ToString() ? 3 : 4;
+                int seatsPerRow = bus.Classification == BusClassifications.Business ? 3 : 4;
 
                 int seatingCapacity = BusService.busSeatingCapacity[bus.Classification];
                 int rows = seatingCapacity / seatsPerRow;
@@ -305,16 +304,16 @@
                         string seat3 = $"{row}3";
 
                         string symbol1 =
-                            schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
 
                         string symbol2 =
-                            schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
 
                         string symbol3 =
-                            schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
 
                         Console.WriteLine(
                             $"[{seat1}:{symbol1}]        [{seat2}:{symbol2}] [{seat3}:{symbol3}]"
@@ -330,20 +329,20 @@
                         string seat4 = $"{row}4";
 
                         string symbol1 =
-                            schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat1] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
 
                         string symbol2 =
-                            schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat2] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
 
                         string symbol3 =
-                            schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat3] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
 
                         string symbol4 =
-                            schedule.SeatPlan[seat4] == BusService.BusSeatStatus.Confirmed.ToString()
-                            ? "✓" : schedule.SeatPlan[seat4] == BusService.BusSeatStatus.Booked.ToString() ? "X" : " ";
+                            schedule.SeatPlan[seat4] == BusSeatStatus.Confirmed
+                            ? "✓" : schedule.SeatPlan[seat4] == BusSeatStatus.Booked ? "X" : " ";
 
                         Console.WriteLine(
                             $"[{seat1}:{symbol1}] [{seat2}:{symbol2}]        [{seat3}:{symbol3}] [{seat4}:{symbol4}]"
@@ -381,7 +380,7 @@
                     InvoiceService invoiceService = new InvoiceService();
                     BookingService bookingService = new BookingService(ticketService, invoiceService);
                     ScheduleService scheduleService = new ScheduleService();
-                    Dictionary<string, string> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
+                    Dictionary<string, BusSeatStatus> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
 
                     decimal amountDue = scheduleService.GetScheduleById(scheduleIdNumber).TicketPrice;
 
@@ -547,7 +546,7 @@
                     paymentService.CreatePayment(invoiceIdNumber, userIdNumber, amount, paymentMethod);
 
                     // Update invoice
-                    invoice.PaymentStatus = InvoiceService.PaymentStatus.Paid.ToString();
+                    invoice.PaymentStatus = PaymentStatus.Paid;
 
                     // Update seat status
                     TicketService ticketService = new TicketService();
@@ -555,7 +554,7 @@
 
                     Ticket ticket = ticketService.GetTicketsById(invoice.TicketId);
                     Schedule schedule = scheduleService.GetScheduleById(ticket.ScheduleId);
-                    schedule.SeatPlan[ticket.Seat] = BusService.BusSeatStatus.Confirmed.ToString();
+                    schedule.SeatPlan[ticket.Seat] = BusSeatStatus.Confirmed;
 
                     Console.WriteLine();
                     Console.WriteLine("Payment Created Successfully!");
@@ -610,7 +609,7 @@
                                 payment.InvoiceId.ToString().PadRight(12) +
                                 $"{payment.Amount} BDT".PadRight(15) +
                                 payment.PaymentMethod.PadRight(20) +
-                                payment.CreatedAt.ToString("yyyy-MM-dd")
+                                payment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
                             );
                         }
 
@@ -658,7 +657,7 @@
                             payment.UserId.ToString().PadRight(10) +
                             $"{payment.Amount} BDT".PadRight(15) +
                             payment.PaymentMethod.PadRight(20) +
-                            payment.CreatedAt.ToString("yyyy-MM-dd")
+                            payment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
                         );
                     }
 

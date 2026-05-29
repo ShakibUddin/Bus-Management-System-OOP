@@ -3,23 +3,25 @@ public class PaymentService
 {
     public void CreatePayment(int invoiceId, int userId, decimal amount, string paymentMethod)
     {
-        if (!CheckIfInvoiceExists(invoiceId)) throw new ArgumentException("No Invoice Found With This Id!");
+        Invoice? invoice = CheckIfInvoiceExists(invoiceId);
+        if (invoice == null) throw new ArgumentException("No Invoice Found With This Id!");
         if (!CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
         if (!CheckIfPaymentMethodExists(paymentMethod)) throw new ArgumentException("Invalid Payment Method!");
+        if (CheckIfInvoiceIsAlreadyPaid(invoice)) throw new ArgumentException("Invoice Is Already Paid!");
 
         Payment newPayment = new(PaymentManager.Payments.Count + 1, invoiceId, userId, amount, paymentMethod);
         PaymentManager.Payments.Add(newPayment);
     }
-    private bool CheckIfInvoiceExists(int invoiceId)
+    private Invoice? CheckIfInvoiceExists(int invoiceId)
     {
         foreach (Invoice invoice in InvoiceManager.Invoices)
         {
             if (invoice.Id == invoiceId)
             {
-                return true;
+                return invoice;
             }
         }
-        return false;
+        return null;
     }
     private bool CheckIfUserExists(int userId)
     {
@@ -63,6 +65,10 @@ public class PaymentService
         List<Payment> payments = PaymentManager.Payments.Where(i => i.UserId == userId).ToList() ?? [];
 
         return payments;
+    }
+    public bool CheckIfInvoiceIsAlreadyPaid(Invoice invoice)
+    {
+        return invoice.PaymentStatus == PaymentStatus.Paid;
     }
     public static List<Payment> GetAllPaymentes()
     {

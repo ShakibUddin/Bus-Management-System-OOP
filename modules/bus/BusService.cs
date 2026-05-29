@@ -1,28 +1,17 @@
 
 public class BusService
 {
-    public enum BusClassifications
+    public static Dictionary<BusClassifications, int> busSeatingCapacity = new()
     {
-        Business,
-        Economy
-    }
-    public enum BusSeatStatus
-    {
-        Confirmed,
-        Available,
-        Booked
-    }
-    public static Dictionary<string, int> busSeatingCapacity = new()
-    {
-        [BusClassifications.Business.ToString()] = 27,
-        [BusClassifications.Economy.ToString()] = 36
+        [BusClassifications.Business] = 27,
+        [BusClassifications.Economy] = 36
     };
     public void CreateBus(string coach, string classification)
     {
         if (CheckIfCoachAlreadyExists(coach)) throw new ArgumentException("Coach Already Exists!");
-        if (!CheckIfClassificationExists(classification)) throw new ArgumentException("Invalid Classification!");
+        if (!Enum.TryParse(classification, out BusClassifications busClassifications)) throw new ArgumentException("Invalid Classification!");
 
-        Bus newBus = new(BusManager.Buses.Count + 1, coach, classification, busSeatingCapacity[classification]);
+        Bus newBus = new(BusManager.Buses.Count + 1, coach, busClassifications, busSeatingCapacity[busClassifications]);
         BusManager.Buses.Add(newBus);
     }
     private bool CheckIfCoachAlreadyExists(string coach)
@@ -36,21 +25,12 @@ public class BusService
         }
         return false;
     }
-    private bool CheckIfClassificationExists(string classification)
-    {
-        if (busSeatingCapacity.ContainsKey(classification))
-        {
-            return true;
-        }
-        return false;
-    }
 
-    public static Dictionary<string, string> GetSeatPlan(string classification)
+    public static Dictionary<string, BusSeatStatus> GetSeatPlan(BusClassifications classification)
     {
-        Dictionary<string, string> seatPlan = new();
+        Dictionary<string, BusSeatStatus> seatPlan = new();
 
-        int seatsPerRow =
-            classification == BusClassifications.Business.ToString() ? 3 : 4;
+        int seatsPerRow = classification == BusClassifications.Business ? 3 : 4;
 
         int seatingCapacity = busSeatingCapacity[classification];
         int rows = seatingCapacity / seatsPerRow;
@@ -62,7 +42,7 @@ public class BusService
             for (int j = 1; j <= seatsPerRow; j++)
             {
                 string seat = $"{row}{j}";
-                seatPlan[seat] = BusSeatStatus.Available.ToString();
+                seatPlan[seat] = BusSeatStatus.Available;
             }
 
             row++;
