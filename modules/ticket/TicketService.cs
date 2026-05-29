@@ -64,6 +64,18 @@ public class TicketService
 
         return tickets;
     }
+    public Ticket GetTicketsById(int ticketId)
+    {
+        if (ticketId <= 0)
+        {
+            throw new ArgumentException("Invalid Ticket ID!");
+        }
+
+        var ticket = TicketManager.Tickets.Find(t => t.Id == ticketId);
+
+        if (ticket == null) throw new ArgumentException("No Tickets Found With This Id");
+        return ticket;
+    }
     public static List<Ticket> GetAllTicketes()
     {
         return TicketManager.Tickets;

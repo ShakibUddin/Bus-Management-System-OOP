@@ -21,7 +21,9 @@
             Console.WriteLine("9. Show User Tickets");
             Console.WriteLine("10. Show User Invoices");
             Console.WriteLine("11. Make Payment");
-            Console.WriteLine("12. Exit");
+            Console.WriteLine("12. Show User Payments");
+            Console.WriteLine("13. Show All Payments");
+            Console.WriteLine("14. Exit");
 
             Console.WriteLine();
             Console.WriteLine("==============================================");
@@ -29,7 +31,7 @@
 
             string input = Console.ReadLine() ?? "";
 
-            if (input == "12")
+            if (input == "14")
                 break;
 
             Console.WriteLine();
@@ -512,6 +514,155 @@
                 {
                     Console.WriteLine();
                     Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "11")
+            {
+                Console.WriteLine("========== MAKE PAYMENT ==========\n");
+
+                Console.Write("Invoice Id : ");
+                string invoiceId = Console.ReadLine() ?? "";
+
+                Console.Write("User Id     : ");
+                string userId = Console.ReadLine() ?? "";
+
+                Console.Write($"Payment Method({String.Join(", ", PaymentManager.PaymentMethods)}): ");
+                string paymentMethod = Console.ReadLine() ?? "";
+
+                try
+                {
+                    int invoiceIdNumber = int.Parse(invoiceId);
+                    int userIdNumber = int.Parse(userId);
+
+                    // Get amount
+                    InvoiceService invoiceService = new InvoiceService();
+                    Invoice invoice = invoiceService.GetInvoiceById(invoiceIdNumber);
+                    decimal amount = invoice.AmountDue;
+
+                    // create payment
+                    PaymentService paymentService = new PaymentService();
+                    paymentService.CreatePayment(invoiceIdNumber, userIdNumber, amount, paymentMethod);
+
+                    // Update invoice
+                    invoice.PaymentStatus = InvoiceService.PaymentStatus.Paid.ToString();
+
+                    // Update seat status
+                    TicketService ticketService = new TicketService();
+                    ScheduleService scheduleService = new ScheduleService();
+
+                    Ticket ticket = ticketService.GetTicketsById(invoice.TicketId);
+                    Schedule schedule = scheduleService.GetScheduleById(ticket.ScheduleId);
+                    schedule.SeatPlan[ticket.Seat] = BusService.BusSeatStatus.Confirmed.ToString();
+
+                    Console.WriteLine();
+                    Console.WriteLine("Payment Created Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "12")
+            {
+                Console.WriteLine("========== USER PAYMENTS ==========\n");
+
+                Console.Write("User Id : ");
+                string userId = Console.ReadLine() ?? "";
+
+                try
+                {
+                    int userIdNumber = int.Parse(userId);
+
+                    PaymentService paymentService = new PaymentService();
+
+                    List<Payment> payments =
+                        paymentService.GetPaymentsByUserId(userIdNumber);
+
+                    if (payments.Count == 0)
+                    {
+                        Console.WriteLine("\nNo Payments Found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+
+                        Console.WriteLine(
+                            "PaymentId".PadRight(12) +
+                            "InvoiceId".PadRight(12) +
+                            "Amount".PadRight(15) +
+                            "Method".PadRight(20) +
+                            "Created At"
+                        );
+
+                        Console.WriteLine(new string('-', 80));
+
+                        foreach (Payment payment in payments)
+                        {
+                            Console.WriteLine(
+                                payment.Id.ToString().PadRight(12) +
+                                payment.InvoiceId.ToString().PadRight(12) +
+                                $"{payment.Amount} BDT".PadRight(15) +
+                                payment.PaymentMethod.PadRight(20) +
+                                payment.CreatedAt.ToString("yyyy-MM-dd")
+                            );
+                        }
+
+                        Console.WriteLine(new string('-', 80));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "13")
+            {
+                Console.WriteLine("========== ALL PAYMENTS ==========\n");
+
+                List<Payment> payments =
+                    PaymentService.GetAllPaymentes();
+
+                if (payments.Count == 0)
+                {
+                    Console.WriteLine("No Payments Found!");
+                }
+                else
+                {
+                    Console.WriteLine(
+                        "PaymentId".PadRight(12) +
+                        "InvoiceId".PadRight(12) +
+                        "UserId".PadRight(10) +
+                        "Amount".PadRight(15) +
+                        "Method".PadRight(20) +
+                        "Created At"
+                    );
+
+                    Console.WriteLine(new string('-', 100));
+
+                    foreach (Payment payment in payments)
+                    {
+                        Console.WriteLine(
+                            payment.Id.ToString().PadRight(12) +
+                            payment.InvoiceId.ToString().PadRight(12) +
+                            payment.UserId.ToString().PadRight(10) +
+                            $"{payment.Amount} BDT".PadRight(15) +
+                            payment.PaymentMethod.PadRight(20) +
+                            payment.CreatedAt.ToString("yyyy-MM-dd")
+                        );
+                    }
+
+                    Console.WriteLine(new string('-', 100));
                 }
 
                 Console.WriteLine("\nPress any key to continue...");
