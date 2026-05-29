@@ -1,7 +1,7 @@
 
 public class TicketService
 {
-    public void CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, string> seatPlan)
+    public Ticket CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, string> seatPlan)
     {
         if (!CheckIfScheduleIdExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
         if (!CheckIfUserIdExists(userId)) throw new ArgumentException("No User Found With This Id!");
@@ -25,6 +25,7 @@ public class TicketService
 
         Ticket newTicket = new(TicketManager.Tickets.Count + 1, scheduleId, userId, seat);
         TicketManager.Tickets.Add(newTicket);
+        return newTicket;
     }
     private bool CheckIfScheduleIdExists(int scheduleId)
     {
@@ -52,7 +53,17 @@ public class TicketService
     {
         return seatPlan.ContainsKey(seat);
     }
+    public List<Ticket> GetTicketsByUserId(int userId)
+    {
+        if (userId <= 0)
+        {
+            throw new ArgumentException("Invalid User ID!");
+        }
 
+        List<Ticket> tickets = TicketManager.Tickets.Where(i => i.UserId == userId).ToList() ?? [];
+
+        return tickets;
+    }
     public static List<Ticket> GetAllTicketes()
     {
         return TicketManager.Tickets;

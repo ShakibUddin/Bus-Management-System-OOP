@@ -376,18 +376,137 @@
                     int userIdNumber = int.Parse(userId);
 
                     TicketService ticketService = new TicketService();
+                    InvoiceService invoiceService = new InvoiceService();
+                    BookingService bookingService = new BookingService(ticketService, invoiceService);
                     ScheduleService scheduleService = new ScheduleService();
                     Dictionary<string, string> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
 
-                    ticketService.CreateTicket(
+                    decimal amountDue = scheduleService.GetScheduleById(scheduleIdNumber).TicketPrice;
+
+                    bookingService.BookTicket(
                         scheduleIdNumber,
                         userIdNumber,
                         seat,
-                        seatPlan
+                        seatPlan,
+                        amountDue
                     );
-
                     Console.WriteLine();
                     Console.WriteLine("Ticket booked successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "9")
+            {
+                Console.WriteLine("========== USER TICKETS ==========\n");
+
+                Console.Write("User Id : ");
+                string userId = Console.ReadLine() ?? "";
+
+                try
+                {
+                    int userIdNumber = int.Parse(userId);
+
+                    TicketService ticketService = new TicketService();
+                    ScheduleService scheduleService = new ScheduleService();
+
+                    List<Ticket> tickets = ticketService.GetTicketsByUserId(userIdNumber);
+
+                    if (tickets.Count == 0)
+                    {
+                        Console.WriteLine("\nNo Tickets Found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+
+                        Console.WriteLine(
+                            "TicketId".PadRight(12) +
+                            "ScheduleId".PadRight(15) +
+                            "Seat".PadRight(10) +
+                            "Route".PadRight(30) +
+                            "Departure"
+                        );
+
+                        Console.WriteLine(new string('-', 90));
+
+                        foreach (Ticket ticket in tickets)
+                        {
+                            Schedule schedule =
+                                scheduleService.GetScheduleById(ticket.ScheduleId);
+
+                            Console.WriteLine(
+                                ticket.Id.ToString().PadRight(12) +
+                                ticket.ScheduleId.ToString().PadRight(15) +
+                                ticket.Seat.PadRight(10) +
+                                $"{schedule.DepartureCity} -> {schedule.ArrivalCity}".PadRight(30) +
+                                $"{schedule.DepartureDate} | {schedule.DepartureTime}"
+                            );
+                        }
+
+                        Console.WriteLine(new string('-', 90));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ERROR: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else if (input == "10")
+            {
+                Console.WriteLine("========== USER INVOICES ==========\n");
+
+                Console.Write("User Id : ");
+                string userId = Console.ReadLine() ?? "";
+
+                try
+                {
+                    int userIdNumber = int.Parse(userId);
+
+                    InvoiceService invoiceService = new InvoiceService();
+
+                    List<Invoice> invoices =
+                        invoiceService.GetInvoicesByUserId(userIdNumber);
+
+                    if (invoices.Count == 0)
+                    {
+                        Console.WriteLine("\nNo Invoices Found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+
+                        Console.WriteLine(
+                            "InvoiceId".PadRight(12) +
+                            "TicketId".PadRight(12) +
+                            "Amount".PadRight(15) +
+                            "Payment Status"
+                        );
+
+                        Console.WriteLine(new string('-', 60));
+
+                        foreach (Invoice invoice in invoices)
+                        {
+                            Console.WriteLine(
+                                invoice.Id.ToString().PadRight(12) +
+                                invoice.TicketId.ToString().PadRight(12) +
+                                $"{invoice.AmountDue} BDT".PadRight(15) +
+                                invoice.PaymentStatus
+                            );
+                        }
+
+                        Console.WriteLine(new string('-', 60));
+                    }
                 }
                 catch (Exception ex)
                 {
