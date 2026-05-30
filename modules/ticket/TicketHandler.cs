@@ -1,6 +1,6 @@
 class TicketHandler
 {
-    public static void BookTicket()
+    public static void BookTicket(BookingService bookingService, ScheduleService scheduleService)
     {
         Console.WriteLine("========== BOOK TICKET ==========\n");
 
@@ -18,10 +18,6 @@ class TicketHandler
             int scheduleIdNumber = int.Parse(scheduleId);
             int userIdNumber = int.Parse(userId);
 
-            TicketService ticketService = new TicketService();
-            InvoiceService invoiceService = new InvoiceService();
-            BookingService bookingService = new BookingService(ticketService, invoiceService);
-            ScheduleService scheduleService = new ScheduleService();
             Dictionary<string, BusSeatStatus> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
 
             decimal amountDue = scheduleService.GetScheduleById(scheduleIdNumber).TicketPrice;
@@ -45,7 +41,7 @@ class TicketHandler
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }
-    public static void ShowUserTickets()
+    public static void ShowUserTickets(TicketService ticketService, ScheduleService scheduleService)
     {
         Console.WriteLine("========== USER TICKETS ==========\n");
 
@@ -55,9 +51,6 @@ class TicketHandler
         try
         {
             int userIdNumber = int.Parse(userId);
-
-            TicketService ticketService = new TicketService();
-            ScheduleService scheduleService = new ScheduleService();
 
             List<Ticket> tickets = ticketService.GetTicketsByUserId(userIdNumber);
 

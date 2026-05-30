@@ -1,6 +1,6 @@
 class PaymentHandler
 {
-    public static void CreatePayment()
+    public static void CreatePayment(InvoiceService invoiceService, PaymentService paymentService, TicketService ticketService, ScheduleService scheduleService)
     {
         Console.WriteLine("========== MAKE PAYMENT ==========\n");
 
@@ -19,20 +19,18 @@ class PaymentHandler
             int userIdNumber = int.Parse(userId);
 
             // Get amount
-            InvoiceService invoiceService = new InvoiceService();
+
             Invoice invoice = invoiceService.GetInvoiceById(invoiceIdNumber);
             decimal amount = invoice.AmountDue;
 
             // create payment
-            PaymentService paymentService = new PaymentService();
             paymentService.CreatePayment(invoiceIdNumber, userIdNumber, amount, paymentMethod);
 
             // Update invoice
             invoice.PaymentStatus = PaymentStatus.Paid;
 
             // Update seat status
-            TicketService ticketService = new TicketService();
-            ScheduleService scheduleService = new ScheduleService();
+
 
             Ticket ticket = ticketService.GetTicketsById(invoice.TicketId);
             Schedule schedule = scheduleService.GetScheduleById(ticket.ScheduleId);
@@ -92,7 +90,7 @@ class PaymentHandler
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }
-    public static void ShowUserPayments()
+    public static void ShowUserPayments(PaymentService paymentService)
     {
         Console.WriteLine("========== USER PAYMENTS ==========\n");
 
@@ -103,10 +101,8 @@ class PaymentHandler
         {
             int userIdNumber = int.Parse(userId);
 
-            PaymentService paymentService = new PaymentService();
 
-            List<Payment> payments =
-                paymentService.GetPaymentsByUserId(userIdNumber);
+            List<Payment> payments = paymentService.GetPaymentsByUserId(userIdNumber);
 
             if (payments.Count == 0)
             {

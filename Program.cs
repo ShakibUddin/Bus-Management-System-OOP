@@ -10,7 +10,16 @@
         BusValidator busValidator = new BusValidator();
         BusService busService = new BusService(busValidator);
 
-        ScheduleService scheduleService = new ScheduleService();
+        ScheduleValidator scheduleValidator = new ScheduleValidator();
+        ScheduleService scheduleService = new ScheduleService(scheduleValidator);
+
+        InvoiceService invoiceService = new InvoiceService();
+        PaymentService paymentService = new PaymentService();
+
+        TicketService ticketService = new TicketService();
+
+        BookingService bookingService = new BookingService(ticketService, invoiceService);
+
         while (true)
         {
             Console.Clear();
@@ -52,11 +61,11 @@
                     break;
 
                 case "8":
-                    TicketHandler.BookTicket();
+                    TicketHandler.BookTicket(bookingService, scheduleService);
                     break;
 
                 case "9":
-                    TicketHandler.ShowUserTickets();
+                    TicketHandler.ShowUserTickets(ticketService, scheduleService);
                     break;
 
                 case "10":
@@ -64,11 +73,11 @@
                     break;
 
                 case "11":
-                    PaymentHandler.CreatePayment();
+                    PaymentHandler.CreatePayment(invoiceService, paymentService, ticketService, scheduleService);
                     break;
 
                 case "12":
-                    PaymentHandler.ShowUserPayments();
+                    PaymentHandler.ShowUserPayments(paymentService);
                     break;
 
                 case "13":
