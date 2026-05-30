@@ -1,6 +1,6 @@
 class UserHandler
 {
-    public static void CreateUser()
+    public static void CreateUser(UserService userService)
     {
         Console.WriteLine("========== CREATE USER ==========");
 
@@ -12,10 +12,6 @@ class UserHandler
 
         Console.Write("Phone(e.g 015...)(11 Digits) : ");
         string phone = Console.ReadLine() ?? "";
-
-        IFormatValidator emailValidator = new EmailValidator();
-        IFormatValidator phoneValidator = new PhoneValidator();
-        UserService userService = new UserService(emailValidator, phoneValidator);
 
         try
         {

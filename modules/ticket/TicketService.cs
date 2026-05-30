@@ -3,8 +3,8 @@ public class TicketService
 {
     public Ticket CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, BusSeatStatus> seatPlan)
     {
-        if (!CheckIfScheduleIdExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
-        if (!CheckIfUserIdExists(userId)) throw new ArgumentException("No User Found With This Id!");
+        if (!CheckIfScheduleExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
+        if (!CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
         if (!CheckIfSeatExists(seatPlan, seat)) throw new ArgumentException("Invalid Seat!");
 
         Schedule schedule = ScheduleManager.Schedules.Find(s => s.Id == scheduleId) ?? throw new ArgumentException("Schedule Not Found!");
@@ -27,7 +27,7 @@ public class TicketService
         TicketManager.Tickets.Add(newTicket);
         return newTicket;
     }
-    private bool CheckIfScheduleIdExists(int scheduleId)
+    private bool CheckIfScheduleExists(int scheduleId)
     {
         foreach (Schedule schedule in ScheduleManager.Schedules)
         {
@@ -38,7 +38,7 @@ public class TicketService
         }
         return false;
     }
-    private bool CheckIfUserIdExists(int userId)
+    private bool CheckIfUserExists(int userId)
     {
         foreach (User user in UserManager.Users)
         {
