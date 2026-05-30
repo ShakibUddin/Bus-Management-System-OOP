@@ -1,6 +1,6 @@
 class InvoiceHandler
 {
-    public static void ShowUserInvoices()
+    public static void ShowUserInvoices(InvoiceService invoiceService)
     {
         Console.WriteLine("========== USER INVOICES ==========\n");
 
@@ -10,8 +10,6 @@ class InvoiceHandler
         try
         {
             int userIdNumber = int.Parse(userId);
-
-            InvoiceService invoiceService = new InvoiceService();
 
             List<Invoice> invoices =
                 invoiceService.GetInvoicesByUserId(userIdNumber);

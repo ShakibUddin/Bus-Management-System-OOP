@@ -83,7 +83,7 @@ class ScheduleHandler
            );
         }
 
-        Console.WriteLine(new string('=', 70));
+        Console.WriteLine(new string('=', 90));
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }

@@ -42,7 +42,7 @@ class BusHandler
             "Created At"
         );
 
-        Console.WriteLine(new string('-', 100));
+        Console.WriteLine(new string('-', 110));
 
         foreach (Bus bus in buses)
         {
@@ -55,7 +55,7 @@ class BusHandler
             );
         }
 
-        Console.WriteLine(new string('-', 100));
+        Console.WriteLine(new string('-', 110));
 
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();

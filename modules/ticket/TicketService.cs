@@ -1,11 +1,16 @@
 
 public class TicketService
 {
+    private readonly TicketValidator _ticketValidator;
+    public TicketService(TicketValidator ticketValidator)
+    {
+        _ticketValidator = ticketValidator;
+    }
     public Ticket CreateTicket(int scheduleId, int userId, string seat, Dictionary<string, BusSeatStatus> seatPlan)
     {
-        if (!CheckIfScheduleExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
-        if (!CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
-        if (!CheckIfSeatExists(seatPlan, seat)) throw new ArgumentException("Invalid Seat!");
+        if (!_ticketValidator.CheckIfScheduleExists(scheduleId)) throw new ArgumentException("No Schedule Found With This Id!");
+        if (!_ticketValidator.CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
+        if (!_ticketValidator.CheckIfSeatExists(seatPlan, seat)) throw new ArgumentException("Invalid Seat!");
 
         Schedule schedule = ScheduleManager.Schedules.Find(s => s.Id == scheduleId) ?? throw new ArgumentException("Schedule Not Found!");
 
@@ -26,32 +31,6 @@ public class TicketService
         Ticket newTicket = new(TicketManager.Tickets.Count + 1, scheduleId, userId, seat);
         TicketManager.Tickets.Add(newTicket);
         return newTicket;
-    }
-    private bool CheckIfScheduleExists(int scheduleId)
-    {
-        foreach (Schedule schedule in ScheduleManager.Schedules)
-        {
-            if (schedule.Id == scheduleId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool CheckIfUserExists(int userId)
-    {
-        foreach (User user in UserManager.Users)
-        {
-            if (user.Id == userId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool CheckIfSeatExists(Dictionary<string, BusSeatStatus> seatPlan, string seat)
-    {
-        return seatPlan.ContainsKey(seat);
     }
     public List<Ticket> GetTicketsByUserId(int userId)
     {

@@ -1,35 +1,18 @@
 
 public class InvoiceService
 {
+    private readonly InvoiceValidator _invoiceValidator;
+    public InvoiceService(InvoiceValidator invoiceValidator)
+    {
+        _invoiceValidator = invoiceValidator;
+    }
     public void CreateInvoice(int ticketId, int userId, decimal amountDue)
     {
-        if (!CheckIfTicketExists(ticketId)) throw new ArgumentException("No Ticket Found With This Id!");
-        if (!CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
+        if (!_invoiceValidator.CheckIfTicketExists(ticketId)) throw new ArgumentException("No Ticket Found With This Id!");
+        if (!_invoiceValidator.CheckIfUserExists(userId)) throw new ArgumentException("No User Found With This Id!");
 
         Invoice newInvoice = new(InvoiceManager.Invoices.Count + 1, ticketId, userId, amountDue, PaymentStatus.Unpaid);
         InvoiceManager.Invoices.Add(newInvoice);
-    }
-    private bool CheckIfTicketExists(int ticketId)
-    {
-        foreach (Ticket ticket in TicketManager.Tickets)
-        {
-            if (ticket.Id == ticketId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool CheckIfUserExists(int userId)
-    {
-        foreach (User user in UserManager.Users)
-        {
-            if (user.Id == userId)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Invoice GetInvoiceById(int invoiceId)

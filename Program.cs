@@ -13,10 +13,14 @@
         ScheduleValidator scheduleValidator = new ScheduleValidator();
         ScheduleService scheduleService = new ScheduleService(scheduleValidator);
 
-        InvoiceService invoiceService = new InvoiceService();
-        PaymentService paymentService = new PaymentService();
+        InvoiceValidator invoiceValidator = new InvoiceValidator();
+        InvoiceService invoiceService = new InvoiceService(invoiceValidator);
 
-        TicketService ticketService = new TicketService();
+        PaymentValidator paymentValidator = new PaymentValidator();
+        PaymentService paymentService = new PaymentService(paymentValidator);
+
+        TicketValidator ticketValidator = new TicketValidator();
+        TicketService ticketService = new TicketService(ticketValidator);
 
         BookingService bookingService = new BookingService(ticketService, invoiceService);
 
@@ -69,7 +73,7 @@
                     break;
 
                 case "10":
-                    InvoiceHandler.ShowUserInvoices();
+                    InvoiceHandler.ShowUserInvoices(invoiceService);
                     break;
 
                 case "11":
