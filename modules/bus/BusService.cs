@@ -1,6 +1,11 @@
 
 public class BusService
 {
+    private readonly BusValidator _busValidator;
+    public BusService(BusValidator busValidator)
+    {
+        _busValidator = busValidator;
+    }
     public static Dictionary<BusClassifications, int> busSeatingCapacity = new()
     {
         [BusClassifications.Business] = 27,
@@ -8,23 +13,13 @@ public class BusService
     };
     public void CreateBus(string coach, string classification)
     {
-        if (CheckIfCoachAlreadyExists(coach)) throw new ArgumentException("Coach Already Exists!");
+        if (_busValidator.CheckIfCoachAlreadyExists(coach)) throw new ArgumentException("Coach Already Exists!");
         if (!Enum.TryParse(classification, out BusClassifications busClassifications)) throw new ArgumentException("Invalid Classification!");
 
         Bus newBus = new(BusManager.Buses.Count + 1, coach, busClassifications, busSeatingCapacity[busClassifications]);
         BusManager.Buses.Add(newBus);
     }
-    private bool CheckIfCoachAlreadyExists(string coach)
-    {
-        foreach (Bus bus in BusManager.Buses)
-        {
-            if (bus.Coach == coach)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     public static Dictionary<string, BusSeatStatus> GetSeatPlan(BusClassifications classification)
     {

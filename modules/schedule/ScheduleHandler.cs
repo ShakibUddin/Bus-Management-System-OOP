@@ -1,6 +1,6 @@
 class ScheduleHandler
 {
-    public static void CreateSchedule()
+    public static void CreateSchedule(ScheduleService scheduleService, BusService busService)
     {
         Console.WriteLine("========== CREATE SCHEDULE ==========");
 
@@ -37,13 +37,12 @@ class ScheduleHandler
             Console.WriteLine("Invalid Bus Id!");
         }
         Console.WriteLine($"busIdNumber: {busIdNumber}");
-        BusService busService = new BusService();
+
         Bus bus = busService.GetBusById(busIdNumber);
 
 
         try
         {
-            ScheduleService scheduleService = new ScheduleService();
             scheduleService.CreateSchedule(busIdNumber, bus.Classification, departureCity, arrivalCity, departureDate, departureTime, ticketPriceDecimal);
             Console.WriteLine();
             Console.WriteLine("Schedule created successfully!");
@@ -88,7 +87,7 @@ class ScheduleHandler
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }
-    public static void ShowScheduleDetails()
+    public static void ShowScheduleDetails(ScheduleService scheduleService, BusService busService)
     {
         Console.Write("Schedule ID  : ");
         string scheduleId = Console.ReadLine() ?? "";
@@ -101,12 +100,10 @@ class ScheduleHandler
         {
             Console.WriteLine("Invalid Schedule Id!");
         }
-        ScheduleService scheduleService = new ScheduleService();
         Schedule schedule = scheduleService.GetScheduleById(scheduleIdNumber);
 
         Console.WriteLine("========== SCHEDULE DETAILS ==========\n");
 
-        BusService busService = new BusService();
         Bus bus = busService.GetBusById(schedule.BusId);
 
         int seatsPerRow = bus.Classification == BusClassifications.Business ? 3 : 4;

@@ -6,6 +6,11 @@
         IFormatValidator phoneValidator = new PhoneValidator();
         UserValidator userValidator = new UserValidator();
         UserService userService = new UserService(emailValidator, phoneValidator, userValidator);
+
+        BusValidator busValidator = new BusValidator();
+        BusService busService = new BusService(busValidator);
+
+        ScheduleService scheduleService = new ScheduleService();
         while (true)
         {
             Console.Clear();
@@ -27,7 +32,7 @@
                     break;
 
                 case "3":
-                    BusHandler.CreateBus();
+                    BusHandler.CreateBus(busService);
                     break;
 
                 case "4":
@@ -35,7 +40,7 @@
                     break;
 
                 case "5":
-                    ScheduleHandler.CreateSchedule();
+                    ScheduleHandler.CreateSchedule(scheduleService, busService);
                     break;
 
                 case "6":
@@ -43,7 +48,7 @@
                     break;
 
                 case "7":
-                    ScheduleHandler.ShowScheduleDetails();
+                    ScheduleHandler.ShowScheduleDetails(scheduleService, busService);
                     break;
 
                 case "8":

@@ -1,6 +1,6 @@
 class BusHandler
 {
-    public static void CreateBus()
+    public static void CreateBus(BusService busService)
     {
         Console.WriteLine("========== CREATE BUS ==========");
 
@@ -9,8 +9,6 @@ class BusHandler
 
         Console.Write($"Classification({String.Join(", ", BusService.busSeatingCapacity.Keys)}) : ");
         string classification = Console.ReadLine() ?? "";
-
-        BusService busService = new BusService();
 
         try
         {
