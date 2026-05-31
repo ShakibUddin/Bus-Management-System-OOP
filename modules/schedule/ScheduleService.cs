@@ -16,6 +16,7 @@ public class ScheduleService
         if (!_scheduleValidator.CheckIfDepartureTimeExists(departureTime)) throw new ArgumentException("Invalid Departure Time!");
         if (!_scheduleValidator.CheckIfDepartureDateIsValid(departureDate)) throw new ArgumentException("Invalid Departure Date!");
         if (ticketPrice <= 0) throw new FormatException("Invalid Ticket Price");
+        if (!_scheduleValidator.checkScheduleAvailability(busId, departureDate, departureTime)) throw new ArgumentException("This Bus Is Already In Another Schedule");
 
         Dictionary<string, BusSeatStatus> seatPlan = BusService.GetSeatPlan(busClassification);
         Schedule newSchedule = new(ScheduleManager.Schedules.Count + 1, busId, departureCity, arrivalCity, departureDate, departureTime, ticketPrice, seatPlan);

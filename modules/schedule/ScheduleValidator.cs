@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Xml.Serialization;
 
 public class ScheduleValidator
 {
@@ -40,4 +41,15 @@ public class ScheduleValidator
         return false;
     }
 
+    public bool checkScheduleAvailability(int busId, string departureDate, string departureTime)
+    {
+        foreach (Schedule schedule in ScheduleManager.Schedules)
+        {
+            if (schedule.BusId == busId && schedule.DepartureDate == departureDate && schedule.DepartureTime == departureTime)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

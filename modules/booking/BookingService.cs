@@ -11,19 +11,15 @@ class BookingService
 
     public void BookTicket(int scheduleId, int userId, string seat, Dictionary<string, BusSeatStatus> seatPlan, decimal amountDue)
     {
-        try
+        Ticket ticket = _ticketService.CreateTicket(
+                    scheduleId,
+                    userId,
+                    seat,
+                    seatPlan
+                );
+        if (ticket != null)
         {
-            Ticket ticket = _ticketService.CreateTicket(
-                        scheduleId,
-                        userId,
-                        seat,
-                        seatPlan
-                    );
             _invoiceService.CreateInvoice(ticket.Id, userId, amountDue);
-        }
-        catch
-        {
-            Console.WriteLine("Something Went Wrong!");
         }
     }
 }
