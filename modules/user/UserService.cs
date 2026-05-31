@@ -12,7 +12,7 @@ public class UserService
     }
     public void CreateUser(string name, string email, string phone)
     {
-        if (!_emailValidator.ValidateFormat(email)) throw new FormatException("Invalid Email Adress!");
+        if (!_emailValidator.ValidateFormat(email)) throw new FormatException("Invalid Email Address!");
         if (!_phoneValidator.ValidateFormat(phone)) throw new FormatException("Invalid Phone Number!");
 
         if (_userValidator.CheckIfEmailAlreadyExists(email)) throw new ArgumentException("Email Already Exists");

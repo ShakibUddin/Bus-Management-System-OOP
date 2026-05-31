@@ -4,27 +4,21 @@ class TicketHandler
     {
         Console.WriteLine("========== BOOK TICKET ==========\n");
 
-        Console.Write("Schedule Id : ");
-        string scheduleId = Console.ReadLine() ?? "";
+        int scheduleId = InputHelper.ReadInt("Schedule Id : ");
 
-        Console.Write("User Id     : ");
-        string userId = Console.ReadLine() ?? "";
+        int userId = InputHelper.ReadInt("User Id     : ");
 
-        Console.Write("Seat (e.g A1): ");
-        string seat = (Console.ReadLine() ?? "").ToUpper();
+        string seat = InputHelper.ReadString("Seat (e.g A1): ");
 
         try
         {
-            int scheduleIdNumber = int.Parse(scheduleId);
-            int userIdNumber = int.Parse(userId);
+            Dictionary<string, BusSeatStatus> seatPlan = scheduleService.GetScheduleById(scheduleId).SeatPlan;
 
-            Dictionary<string, BusSeatStatus> seatPlan = scheduleService.GetScheduleById(scheduleIdNumber).SeatPlan;
-
-            decimal amountDue = scheduleService.GetScheduleById(scheduleIdNumber).TicketPrice;
+            decimal amountDue = scheduleService.GetScheduleById(scheduleId).TicketPrice;
 
             bookingService.BookTicket(
-                scheduleIdNumber,
-                userIdNumber,
+                scheduleId,
+                userId,
                 seat,
                 seatPlan,
                 amountDue
@@ -45,14 +39,11 @@ class TicketHandler
     {
         Console.WriteLine("========== USER TICKETS ==========\n");
 
-        Console.Write("User Id : ");
-        string userId = Console.ReadLine() ?? "";
+        int userId = InputHelper.ReadInt("User Id : ");
 
         try
         {
-            int userIdNumber = int.Parse(userId);
-
-            List<Ticket> tickets = ticketService.GetTicketsByUserId(userIdNumber);
+            List<Ticket> tickets = ticketService.GetTicketsByUserId(userId);
 
             if (tickets.Count == 0)
             {

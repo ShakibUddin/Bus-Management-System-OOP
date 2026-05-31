@@ -4,11 +4,9 @@ class BusHandler
     {
         Console.WriteLine("========== CREATE BUS ==========");
 
-        Console.Write("Coach  : ");
-        string coach = Console.ReadLine() ?? "";
+        string coach = InputHelper.ReadStringWithDigits("Coach  : ") ?? "";
 
-        Console.Write($"Classification({String.Join(", ", BusService.busSeatingCapacity.Keys)}) : ");
-        string classification = Console.ReadLine() ?? "";
+        string classification = InputHelper.ReadString($"Classification({String.Join(", ", BusService.busSeatingCapacity.Keys)}) : ") ?? "";
 
         try
         {
@@ -42,7 +40,7 @@ class BusHandler
             "Created At"
         );
 
-        Console.WriteLine(new string('-', 110));
+        Console.WriteLine(new string('-', 120));
 
         foreach (Bus bus in buses)
         {
@@ -55,7 +53,7 @@ class BusHandler
             );
         }
 
-        Console.WriteLine(new string('-', 110));
+        Console.WriteLine(new string('-', 120));
 
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();

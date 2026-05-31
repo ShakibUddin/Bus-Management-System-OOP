@@ -4,46 +4,22 @@ class ScheduleHandler
     {
         Console.WriteLine("========== CREATE SCHEDULE ==========");
 
-        Console.Write("Bus Id  : ");
-        string busId = Console.ReadLine() ?? "";
+        int busId = InputHelper.ReadInt("Bus Id  : ");
 
-        Console.WriteLine("Departure City : ");
-        Console.Write($"Cities({String.Join(", ", ScheduleManager.availableCities)}) : ");
-        string departureCity = Console.ReadLine() ?? "";
+        string departureCity = InputHelper.ReadString($"Departure City({String.Join(", ", ScheduleManager.availableCities)}) : ") ?? "";
 
-        Console.WriteLine("Arrival City : ");
-        Console.Write($"Cities({String.Join(", ", ScheduleManager.availableCities)}) : ");
-        string arrivalCity = Console.ReadLine() ?? "";
+        string arrivalCity = InputHelper.ReadString($"Arrival City({String.Join(", ", ScheduleManager.availableCities)}) : ") ?? "";
 
-        Console.Write("Departure Date(YYYY-MM-DD) : ");
-        string departureDate = Console.ReadLine() ?? "";
+        string departureDate = InputHelper.ReadString("Departure Date(YYYY-MM-DD) : ") ?? "";
 
+        string departureTime = InputHelper.ReadString($"Departure Time({String.Join(", ", ScheduleManager.availableTimeSlots)}) : ") ?? "";
 
-        Console.WriteLine("Departure Time : ");
-        Console.Write($"Slots({String.Join(", ", ScheduleManager.availableTimeSlots)}) : ");
-        string departureTime = Console.ReadLine() ?? "";
-
-        Console.Write("Ticket Price(BDT) : ");
-        string ticketPrice = Console.ReadLine() ?? "";
-
-        int busIdNumber = 0;
-        decimal ticketPriceDecimal = decimal.Parse(ticketPrice);
-        try
-        {
-            busIdNumber = int.Parse(busId);
-        }
-        catch
-        {
-            Console.WriteLine("Invalid Bus Id!");
-        }
-        Console.WriteLine($"busIdNumber: {busIdNumber}");
-
-        Bus bus = busService.GetBusById(busIdNumber);
-
+        decimal ticketPrice = InputHelper.ReadDecimal("Ticket Price(BDT) : ");
 
         try
         {
-            scheduleService.CreateSchedule(busIdNumber, bus.Classification, departureCity, arrivalCity, departureDate, departureTime, ticketPriceDecimal);
+            Bus bus = busService.GetBusById(busId);
+            scheduleService.CreateSchedule(busId, bus.Classification, departureCity, arrivalCity, departureDate, departureTime, ticketPrice);
             Console.WriteLine();
             Console.WriteLine("Schedule created successfully!");
         }
@@ -89,106 +65,106 @@ class ScheduleHandler
     }
     public static void ShowScheduleDetails(ScheduleService scheduleService, BusService busService)
     {
-        Console.Write("Schedule ID  : ");
-        string scheduleId = Console.ReadLine() ?? "";
-        int scheduleIdNumber = 0;
         try
         {
-            scheduleIdNumber = int.Parse(scheduleId);
-        }
-        catch
-        {
-            Console.WriteLine("Invalid Schedule Id!");
-        }
-        Schedule schedule = scheduleService.GetScheduleById(scheduleIdNumber);
+            int scheduleId = InputHelper.ReadInt("Schedule ID  : ");
 
-        Console.WriteLine("========== SCHEDULE DETAILS ==========\n");
+            Schedule schedule = scheduleService.GetScheduleById(scheduleId);
 
-        Bus bus = busService.GetBusById(schedule.BusId);
+            Console.WriteLine("========== SCHEDULE DETAILS ==========\n");
 
-        int seatsPerRow = bus.Classification == BusClassifications.Business ? 3 : 4;
+            Bus bus = busService.GetBusById(schedule.BusId);
 
-        int seatingCapacity = BusService.busSeatingCapacity[bus.Classification];
-        int rows = seatingCapacity / seatsPerRow;
+            int seatsPerRow = bus.Classification == BusClassifications.Business ? 3 : 4;
 
-        Console.WriteLine(new string('=', 70));
-        Console.WriteLine($"Schedule Id   : {schedule.Id}");
-        Console.WriteLine($"Bus Id        : {schedule.BusId}");
-        Console.WriteLine($"Class         : {bus.Classification}");
-        Console.WriteLine($"Route         : {schedule.DepartureCity} -> {schedule.ArrivalCity}");
-        Console.WriteLine($"Departure     : {schedule.DepartureDate} | {schedule.DepartureTime}");
-        Console.WriteLine($"Price         : {schedule.TicketPrice} BDT");
+            int seatingCapacity = BusService.busSeatingCapacity[bus.Classification];
+            int rows = seatingCapacity / seatsPerRow;
 
-        Console.WriteLine(new string('-', 70));
+            Console.WriteLine(new string('=', 70));
+            Console.WriteLine($"Schedule Id   : {schedule.Id}");
+            Console.WriteLine($"Bus Id        : {schedule.BusId}");
+            Console.WriteLine($"Class         : {bus.Classification}");
+            Console.WriteLine($"Route         : {schedule.DepartureCity} -> {schedule.ArrivalCity}");
+            Console.WriteLine($"Departure     : {schedule.DepartureDate} | {schedule.DepartureTime}");
+            Console.WriteLine($"Price         : {schedule.TicketPrice} BDT");
 
-        // LEGEND
-        Console.WriteLine("Seat Layout ([ ] Available        [X] Booked      [✓] Confirmed):\n");
-        Console.WriteLine();
+            Console.WriteLine(new string('-', 70));
 
-        char row = 'A';
+            // LEGEND
+            Console.WriteLine("Seat Layout ([ ] Available        [X] Booked      [✓] Confirmed):\n");
+            Console.WriteLine();
 
-        for (int i = 0; i < rows; i++)
-        {
-            if (seatsPerRow == 3)
+            char row = 'A';
+
+            for (int i = 0; i < rows; i++)
             {
-                // BUSINESS => 1 + aisle + 2
+                if (seatsPerRow == 3)
+                {
+                    // BUSINESS => 1 + aisle + 2
 
-                string seat1 = $"{row}1";
-                string seat2 = $"{row}2";
-                string seat3 = $"{row}3";
+                    string seat1 = $"{row}1";
+                    string seat2 = $"{row}2";
+                    string seat3 = $"{row}3";
 
-                string symbol1 =
-                    schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
+                    string symbol1 =
+                        schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
 
-                string symbol2 =
-                    schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
+                    string symbol2 =
+                        schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
 
-                string symbol3 =
-                    schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
+                    string symbol3 =
+                        schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
 
-                Console.WriteLine(
-                    $"[{seat1}:{symbol1}]        [{seat2}:{symbol2}] [{seat3}:{symbol3}]"
-                );
+                    Console.WriteLine(
+                        $"[{seat1}:{symbol1}]        [{seat2}:{symbol2}] [{seat3}:{symbol3}]"
+                    );
+                }
+                else
+                {
+                    // ECONOMY => 2 + aisle + 2
+
+                    string seat1 = $"{row}1";
+                    string seat2 = $"{row}2";
+                    string seat3 = $"{row}3";
+                    string seat4 = $"{row}4";
+
+                    string symbol1 =
+                        schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
+
+                    string symbol2 =
+                        schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
+
+                    string symbol3 =
+                        schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
+
+                    string symbol4 =
+                        schedule.SeatPlan[seat4] == BusSeatStatus.Confirmed
+                        ? "✓" : schedule.SeatPlan[seat4] == BusSeatStatus.Booked ? "X" : " ";
+
+                    Console.WriteLine(
+                        $"[{seat1}:{symbol1}] [{seat2}:{symbol2}]        [{seat3}:{symbol3}] [{seat4}:{symbol4}]"
+                    );
+                }
+
+                row++;
             }
-            else
-            {
-                // ECONOMY => 2 + aisle + 2
 
-                string seat1 = $"{row}1";
-                string seat2 = $"{row}2";
-                string seat3 = $"{row}3";
-                string seat4 = $"{row}4";
+            Console.WriteLine("\n");
 
-                string symbol1 =
-                    schedule.SeatPlan[seat1] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat1] == BusSeatStatus.Booked ? "X" : " ";
+            Console.WriteLine(new string('=', 70));
 
-                string symbol2 =
-                    schedule.SeatPlan[seat2] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat2] == BusSeatStatus.Booked ? "X" : " ";
-
-                string symbol3 =
-                    schedule.SeatPlan[seat3] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat3] == BusSeatStatus.Booked ? "X" : " ";
-
-                string symbol4 =
-                    schedule.SeatPlan[seat4] == BusSeatStatus.Confirmed
-                    ? "✓" : schedule.SeatPlan[seat4] == BusSeatStatus.Booked ? "X" : " ";
-
-                Console.WriteLine(
-                    $"[{seat1}:{symbol1}] [{seat2}:{symbol2}]        [{seat3}:{symbol3}] [{seat4}:{symbol4}]"
-                );
-            }
-
-            row++;
         }
-
-        Console.WriteLine("\n");
-
-        Console.WriteLine(new string('=', 70));
+        catch (Exception ex)
+        {
+            Console.WriteLine();
+            Console.WriteLine("ERROR: " + ex.Message);
+        }
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }

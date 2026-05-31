@@ -4,19 +4,16 @@ class InvoiceHandler
     {
         Console.WriteLine("========== USER INVOICES ==========\n");
 
-        Console.Write("User Id : ");
-        string userId = Console.ReadLine() ?? "";
+        int userId = InputHelper.ReadInt("User Id : ");
 
         try
         {
-            int userIdNumber = int.Parse(userId);
-
             List<Invoice> invoices =
-                invoiceService.GetInvoicesByUserId(userIdNumber);
+                invoiceService.GetInvoicesByUserId(userId);
 
             if (invoices.Count == 0)
             {
-                Console.WriteLine("\nNo Invoices Found!");
+                Console.WriteLine("\nNo Invoices Found With This User Id!");
             }
             else
             {

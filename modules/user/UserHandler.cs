@@ -4,14 +4,11 @@ class UserHandler
     {
         Console.WriteLine("========== CREATE USER ==========");
 
-        Console.Write("Name  : ");
-        string name = Console.ReadLine() ?? "";
+        string name = InputHelper.ReadString("Name  : ") ?? "";
 
-        Console.Write("Email : ");
-        string email = Console.ReadLine() ?? "";
+        string email = InputHelper.ReadString("Email : ") ?? "";
 
-        Console.Write("Phone(e.g 015...)(11 Digits) : ");
-        string phone = Console.ReadLine() ?? "";
+        string phone = InputHelper.ReadPhoneNumber("Phone(e.g 015...)(11 Digits) : ") ?? "";
 
         try
         {

@@ -4,27 +4,21 @@ class PaymentHandler
     {
         Console.WriteLine("========== MAKE PAYMENT ==========\n");
 
-        Console.Write("Invoice Id : ");
-        string invoiceId = Console.ReadLine() ?? "";
+        int invoiceId = InputHelper.ReadInt("Invoice Id : ");
 
-        Console.Write("User Id     : ");
-        string userId = Console.ReadLine() ?? "";
+        int userId = InputHelper.ReadInt("User Id     : ");
 
-        Console.Write($"Payment Method({String.Join(", ", PaymentManager.PaymentMethods)}): ");
-        string paymentMethod = Console.ReadLine() ?? "";
+        string paymentMethod = InputHelper.ReadString($"Payment Method({String.Join(", ", PaymentManager.PaymentMethods)}): ") ?? "";
 
         try
         {
-            int invoiceIdNumber = int.Parse(invoiceId);
-            int userIdNumber = int.Parse(userId);
-
             // Get amount
 
-            Invoice invoice = invoiceService.GetInvoiceById(invoiceIdNumber);
+            Invoice invoice = invoiceService.GetInvoiceById(invoiceId);
             decimal amount = invoice.AmountDue;
 
             // create payment
-            paymentService.CreatePayment(invoiceIdNumber, userIdNumber, amount, paymentMethod);
+            paymentService.CreatePayment(invoiceId, userId, amount, paymentMethod);
 
             // Update invoice
             invoice.PaymentStatus = PaymentStatus.Paid;
@@ -52,8 +46,7 @@ class PaymentHandler
     {
         Console.WriteLine("========== ALL PAYMENTS ==========\n");
 
-        List<Payment> payments =
-            PaymentService.GetAllPaymentes();
+        List<Payment> payments = PaymentService.GetAllPaymentes();
 
         if (payments.Count == 0)
         {
@@ -94,15 +87,11 @@ class PaymentHandler
     {
         Console.WriteLine("========== USER PAYMENTS ==========\n");
 
-        Console.Write("User Id : ");
-        string userId = Console.ReadLine() ?? "";
+        int userId = InputHelper.ReadInt("User Id : ");
 
         try
         {
-            int userIdNumber = int.Parse(userId);
-
-
-            List<Payment> payments = paymentService.GetPaymentsByUserId(userIdNumber);
+            List<Payment> payments = paymentService.GetPaymentsByUserId(userId);
 
             if (payments.Count == 0)
             {
